@@ -16,16 +16,30 @@ User.init(
             autoIncrement: true
         },
         username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
 
         },
         password: {
+            type: DataTypes.STRING,
+            allowNull: false,
 
         },
     },
     {
     hooks: {
         // set up beforeCreate lifecycle "hook"
+
         // beforeCreate: async () => {},
+        beforeCreate: async (userData) => {
+            userData.password = await bcrypt.hash(userData.password, 11);
+            return userData
+        },
+        beforeUpdate: async (updateUserData) => {
+            updateUserData.password = await bcrypt.hash(updateUserData.password, 11);
+            return updateUserData;
+        }
         // beforeUpdate: async () => {}
     },
     sequelize,
